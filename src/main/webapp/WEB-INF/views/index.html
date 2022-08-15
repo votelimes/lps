@@ -1,0 +1,50 @@
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+	<title>Система кредитных заявок</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+		  integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+	<link rel='stylesheet' id='roboto-subset.css-css'
+		  href='https://mdbcdn.b-cdn.net/wp-content/themes/mdbootstrap4/docs-app/css/mdb5/fonts/roboto-subset.css?ver=3.9.0-update.5'
+		  type='text/css' media='all' />
+	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js"></script>
+</head>
+<body style="background-color: #eeebe2">
+	<!--HEADER-->
+	<header th:insert="blocks/header :: header"></header>
+
+	<blockquote class="blockquote text-center" style="margin-bottom: 40px; margin-top: 60px">
+		<p class="mb-0">Найти существующую заявку</p>
+	</blockquote>
+
+	<form class="row d-flex justify-content-center" action="index" method="post">
+		<input type="hidden" name="view" value="true" />
+		<!--Grid column-->
+		<div class="col-md-6">
+			<div class="input-group rounded">
+				<input name="loan_id" id="search_field" type="search" class="form-control rounded" placeholder="Номер заявки" aria-label="Search" aria-describedby="search-addon" />
+				<button type="submit" class="btn btn-primary border-0 text-dark" style="outline: none; box-shadow: none; margin-left: 16px; background-color: #ff9f8c">Найти</button>
+			</div>
+		</div>
+		<!--Grid column-->
+	</form>
+	<div class="row d-flex justify-content-center">
+		<div th:if="${error == true}" th:text="${errorMessage}" class="alert alert-danger row d-flex justify-content-center" role="alert"></div>
+	</div>
+	<blockquote class="blockquote text-center" style="margin-bottom: 40px; margin-top: 60px">
+	<p class="mb-0">или</p>
+	</blockquote>
+	<div class="container">
+		<div class="row">
+			<div class="col text-center">
+				<form action="index?create=true" method="post">
+					<input type="hidden" name="create" value="true" />
+					<button class="btn btn-primary border-0 text-dark" type="submit" style="outline: none; box-shadow: none; background-color: #ff9f8c">Создать новую</button>
+				</form>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

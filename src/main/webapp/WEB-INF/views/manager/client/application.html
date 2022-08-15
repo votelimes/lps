@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+  <title>Статус заявки</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+  <script src="https://unpkg.com/gijgo@1.9.13/js/gijgo.min.js" type="text/javascript"></script>
+  <link href="https://unpkg.com/gijgo@1.9.13/css/gijgo.min.css" rel="stylesheet" type="text/css"  />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.ru.min.js"
+          integrity="sha512-tPXUMumrKam4J6sFLWF/06wvl+Qyn27gMfmynldU730ZwqYkhT2dFUmttn2PuVoVRgzvzDicZ/KgOhWD+KAYQQ=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+</head>
+<body style="background-color: #eeebe2">
+  <!--HEADER-->
+  <header th:insert="blocks/header :: header"></header>
+  <!--MEDIUM-->
+  <div class="" style="position:absolute; top:40px; right: 40px;">
+  <div th:if="${message == true}" th:text="${messageText}" class="alert alert-success row d-flex justify-content-center" role="alert"></div>
+</div>
+  <div class="row d-flex justify-content-center">
+  <div class="col-md-6">
+    <form action="?changeByManager=true" method="post">
+      <input hidden name="loan_id" th:value="${creditApplication.id}">
+      <input hidden name="loan_uuid" th:value="${creditApplication.uuid}">
+      <p class="h4" style="margin-top: 40px">Данные о заявке</p>
+      <div class="form-group">
+        <label for="loan_state">Статус зявки</label>
+        <select class="form-control" name="loan_state" id="loan_state">
+          <option value="0" th:hidden="${creditApplication.loanState.toInt() >=3}" th:selected="${creditApplication.loanState.toInt() == 0}">Создано, ждет решения</option>
+          <option value="1" th:hidden="${creditApplication.loanState.toInt() >=3}" th:selected="${creditApplication.loanState.toInt() == 1}">Отклонено</option>
+          <option value="2" th:hidden="${creditApplication.loanState.toInt() >=3}" th:selected="${creditApplication.loanState.toInt() == 2}">Одобрено, ждет подписи пользователем</option>
+          <option value="3" th:hidden="${creditApplication.loanState.toInt() !=3}" th:selected="${creditApplication.loanState.toInt() == 3}">Подписано пользователем, ждет завершения</option>
+          <option value="4" th:hidden="${creditApplication.loanState.toInt() < 3}" th:selected="${creditApplication.loanState.toInt() == 4}">Завершено</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="repayment_time" th:readonly="${creditApplication.loanState.toInt() >=3}">Срок кредита</label>
+        <input type="number" name="repayment_time" th:readonly="${creditApplication.loanState.toInt() >=3}" class="form-control" id="repayment_time" placeholder="Срок возврата" th:value="${creditApplication.repaymentTime}">
+        <small id="repayment_time_help" th:readonly="${creditApplication.loanState.toInt() >=3}" class="form-text text-muted">Рассчитанный срок кредита в днях</small>
+      </div>
+      <div class="form-group">
+        <label for="approved_amount">Одобренная сумма кредита</label>
+        <input type="text" name="approved_amount" th:hidden="${creditApplication.loanState.toInt() >=3}" class="form-control" id="approved_amount" placeholder="Время создания" th:value="${creditApplication.approvedAmount}">
+        <small id="approved_amount_help" class="form-text text-muted">Сумма, одобренная менеджером</small>
+      </div>
+      <div class="form-group">
+        <label for="creation_time">Время создания заявки</label>
+        <input type="text" readonly class="form-control" id="creation_time" placeholder="Время создания" th:value="${creditApplication.creationDate}">
+        <small id="creation_time_help" class="form-text text-muted">Рассчитанное время кредита в днях</small>
+      </div>
+      <div class="form-group" th:hidden="${creditApplication.loanState.toInt() >=4}">
+        <button type="submit" class="btn btn-primary border-0 text-dark" style="outline: none; box-shadow: none; background-color: #80d5da">Сохранить</button>
+      </div>
+    </form>
+    <form action="" method="post" style="margin-top: 60px">
+      <input hidden name="showOffer" th:value="'true'">
+      <input hidden name="uuid" th:value="${creditApplication.uuid}">
+      <div class="form-group" th:if="${isShowPossible}">
+        <button class="btn btn-primary border-0" type="submit" style="outline: none; box-shadow: none; background-color: #ff9f8c">Просмотреть подписанный договор</button>
+      </div>
+    </form>
+    <form>
+      <p class="h4" style="margin-top: 60px">Паспортные данные</p>
+      <div class="form-group">
+        <label for="first_name">Имя</label>
+        <input type="text" readonly class="form-control" id="first_name" placeholder="Ваше имя" th:value="${passport.firstName}">
+        <small id="first_name_help" class="form-text text-muted">Ваше имя, как указано в паспорте</small>
+      </div>
+      <div class="form-group">
+        <label for="second_name">Фамилия</label>
+        <input type="text" readonly class="form-control" id="second_name" placeholder="Ваша фамилия" th:value="${passport.secondName}">
+        <small id="second_name_help" class="form-text text-muted">Ваша фамилия, как указана в паспорте</small>
+      </div>
+      <div class="form-group">
+        <label for="patronymic">Отчество</label>
+        <input type="text" readonly class="form-control" id="patronymic" aria-describedby="patronymicHelp" placeholder="Ваше отчество" th:value="${passport.patronymic}">
+        <small id="patronymicHelp" class="form-text text-muted">Оставьте это поле пустым если у вас нет отчества</small>
+      </div>
+      <div class="form-group">
+        <label for="birthdate">Дата рождения</label>
+        <input type="date" readonly class="form-control" id="birthdate" placeholder="Выберите дату своего рождения" th:value="${passport.birthDate}">
+        <small id="birthdate_help" class="form-text text-muted">Ваша дата рождения, как указано в паспорте</small>
+      </div>
+      <div class="form-group">
+        <label for="passport_serial">Серия паспорта</label>
+        <input type="text" readonly class="form-control" id="passport_serial" placeholder="Серия вашего паспорта" maxlength="4" th:value="${passport.passportSeries}">
+        <small id="passport_serial_help" class="form-text text-muted">Вводите данные без пробелов и знаков тире</small>
+      </div>
+      <div class="form-group">
+        <label for="passport_number">Номер паспорта</label>
+        <input type="text" readonly class="form-control" id="passport_number" placeholder="Номер вашего паспорта" maxlength="6" th:value="${passport.passportID}">
+        <small id="passport_number_help" class="form-text text-muted">Вводите данные без пробелов и знаков тире</small>
+      </div>
+      <div class="form-group">
+        <label for="issuedBy">Кем выдан паспорт</label>
+        <input type="text" readonly class="form-control" id="issuedBy" placeholder="Кем выдан ваш паспорт" th:value="${passport.issuedBy}">
+      </div>
+      <div class="form-group">
+        <label for="passport_date">Когда выдан</label>
+        <input type="date" readonly class="form-control" id="passport_date" placeholder="Выберите дату выдачи паспорта" th:value="${passport.passportDate}">
+        <small id="passport_date_help" class="form-text text-muted">Введите вручную или нажмите на значок календаря справа</small>
+      </div>
+      <div class="form-group">
+        <label for="passport_gender">Ваш пол</label>
+        <input readonly class="form-control" id="passport_gender" th:value="${passport.gender.getInRussian()}">
+      </div>
+      <div class="form-group">
+        <label for="passport_marital">Ваше семейное положение</label>
+        <input readonly class="form-control" id="passport_marital" th:value="${passport.maritalStatus.getInRussian()}">
+      </div>
+      <div class="form-group">
+        <label for="passport_country">Страна</label>
+        <input readonly type="text" class="form-control" id="passport_country" placeholder="Страна, указанная в паспорте" th:value="${passport.registrationCountry}">
+      </div>
+      <div class="form-group">
+        <label for="passport_region">Регион</label>
+        <input readonly type="text" class="form-control" id="passport_region" placeholder="Регион (область) по месту регистрации" th:value="${passport.registrationRegion}">
+        <small id="passport_region_help" class="form-text text-muted">Это поле можно оставить пустым</small>
+      </div>
+      <div class="form-group">
+        <label for="passport_city">Город</label>
+        <input readonly type="text" class="form-control" id="passport_city" placeholder="Город по месту регистрации" th:value="${passport.registrationCity}">
+      </div>
+      <div class="form-group">
+        <label for="passport_street">Улица</label>
+        <input readonly type="text" class="form-control" id="passport_street" placeholder="Улица по месту регистрации" th:value="${passport.registrationStreet}">
+      </div>
+      <div class="form-group">
+        <label for="passport_house">Дом</label>
+        <input readonly type="text" class="form-control" id="passport_house" placeholder="Дом по месту регистрации" th:value="${passport.registrationHouse}">
+      </div>
+      <div class="form-group">
+        <label for="passport_apps">Квартира</label>
+        <input readonly type="text" class="form-control" id="passport_apps" placeholder="Квартира по месту регистрации" th:value="${passport.registrationApps}">
+        <small id="passport_apps_help" class="form-text text-muted">Это поле можно оставить пустым</small>
+      </div>
+
+      <div class="form-group">
+        <label for="contactNumber">Номер телефона</label>
+        <input readonly type="number" class="form-control" id="contactNumber" placeholder="Контактный номер" th:value="${creditApplication.contactNumber}">
+        <small id="contactNumber_help" class="form-text text-muted">Вводите только цифры</small>
+      </div>
+
+      <p class="h4" style="margin-top: 20px">Данные о месте работы</p>
+      <div th:each="el : ${jobsList}" class="form-group" style="margin-top: 24px">
+        <div class="form-group">
+          <label for="company_name">Название компании</label>
+          <input readonly type="text" class="form-control" id="company_name" placeholder="Название компании, в которой вы работали" th:value="${el.companyName}">
+        </div>
+        <div class="form-group">
+          <label for="company_job">Занимаемая должность</label>
+          <input readonly type="text" class="form-control" id="company_job" placeholder="Должность, которую вы занимали" th:value="${el.jobTitle}">
+        </div>
+        <div class="form-group">
+          <label for="company_name">Дата трудоустройства</label>
+          <input readonly type="date" class="form-control" id="company_date_start" th:value="${el.dateStart}">
+        </div>
+        <div class="form-group">
+          <label for="company_name">Дата увольнения</label>
+          <input readonly type="date" class="form-control" id="company_date_end" th:value="${el.dateEnd}">
+          <small id="company_date_end_help" class="form-text text-muted">Оставьте пустым, если еще работаете</small>
+        </div>
+        <div class="form-group">
+          <label for="company_name">Средняя заработная плата</label>
+          <input readonly type="text" class="form-control" id="company_salary" placeholder="Ваша заработная плата" th:value="${el.salary}">
+          <small id="company_name_help" class="form-text text-muted">Введите сумму цифрами</small>
+        </div>
+      </div>
+
+      <p class="h4" style="margin-top: 20px">Данные о кредите</p>
+      <div class="form-group">
+        <label for="desired_amount">Сумма кредита</label>
+        <input readonly type="text" class="form-control" id="desired_amount" placeholder="Сумма, которую вы хотели бы получить" th:value="${creditApplication.desiredAmount}">
+        <small id="desired_amount_help" class="form-text text-muted">Введите сумму цифрами</small>
+      </div>
+    </form>
+  </div>
+</div>
+  <div class="modal" tabindex="-1" role="dialog" id="signModal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Подписать договор</h5>
+        <button type="button" class="close border-0" data-dismiss="modal" aria-label="Close" style="background-color: #ff9f8c">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Вы уверены, что хотите подписать договор? Подписав договор, вы солгашаетесь со всеми выдвинутыми условиями.</p>
+        <h6><a href="">Просмотреть договор</a></h6>
+      </div>
+      <div class="modal-footer">
+        <form action="status" method="post">
+          <input hidden name="user_sign" value="true">
+          <input hidden name="uuid" th:value="${creditApplication.uuid}">
+          <button type="submit" class="btn btn-primary border-0 text-dark" style="background-color: #80d5da">Подписать</button>
+        </form>
+        <button type="button" class="btn btn-secondary border-0" data-dismiss="modal" style="background-color: #ff9f8c">Закрыть</button>
+      </div>
+    </div>
+  </div>
+</div>
+  <script>
+  function form_submit() {
+    document.getElementById("paymentitrform").submit();
+  }
+</script>
+  <footer th:insert="blocks/footer :: footer"></footer>
+</body>
+</html>

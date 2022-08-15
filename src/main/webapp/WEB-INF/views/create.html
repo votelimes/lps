@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+  <title>Статус заявки</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+  <script src="https://unpkg.com/gijgo@1.9.13/js/gijgo.min.js" type="text/javascript"></script>
+  <link href="https://unpkg.com/gijgo@1.9.13/css/gijgo.min.css" rel="stylesheet" type="text/css"  />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.ru.min.js"
+          integrity="sha512-tPXUMumrKam4J6sFLWF/06wvl+Qyn27gMfmynldU730ZwqYkhT2dFUmttn2PuVoVRgzvzDicZ/KgOhWD+KAYQQ=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+</head>
+  <!--HEADER-->
+  <header th:insert="blocks/header :: header"></header>
+  <!--MEDIUM-->
+  <body style="background-color: #eeebe2">
+    <div class="row d-flex justify-content-center">
+      <div class="col-md-6">
+        <form action="" method="post">
+          <p class="h4" style="margin-top: 60px">Паспортные данные</p>
+          <div class="form-group">
+            <label for="first_name">Имя</label>
+            <input type="text" required name="first_name" class="form-control" id="first_name" placeholder="Ваше имя">
+            <small id="first_name_help" class="form-text text-muted">Ваше имя, как указано в паспорте</small>
+          </div>
+          <div class="form-group">
+            <label for="second_name">Фамилия</label>
+            <input type="text" required name="second_name" class="form-control" id="second_name" placeholder="Ваша фамилия">
+            <small id="second_name_help" class="form-text text-muted">Ваша фамилия, как указана в паспорте</small>
+          </div>
+          <div class="form-group">
+            <label for="patronymic">Отчество</label>
+            <input type="text" class="form-control" name="patronymic" id="patronymic" aria-describedby="patronymicHelp" placeholder="Ваше отчество">
+            <small id="patronymicHelp" class="form-text text-muted">Оставьте это поле пустым если у вас нет отчества</small>
+          </div>
+          <div class="form-group">
+            <label for="birthdate">Дата рождения</label>
+            <input type="date" required class="form-control" name="birthdate" id="birthdate" placeholder="Выберите дату своего рождения">
+            <small id="birthdate_help" class="form-text text-muted">Ваша дата рождения, как указано в паспорте</small>
+          </div>
+          <div class="form-group">
+            <label for="passport_serial">Серия паспорта</label>
+            <input type="text" required name="passport_serial" class="form-control" id="passport_serial" placeholder="Серия вашего паспорта" maxlength="4">
+            <small id="passport_serial_help" class="form-text text-muted">Вводите данные без пробелов и знаков тире</small>
+          </div>
+          <div class="form-group">
+            <label for="passport_number">Номер паспорта</label>
+            <input type="number" required name="passport_number" class="form-control" id="passport_number" placeholder="Номер вашего паспорта" maxlength="6">
+            <small id="passport_number_help" class="form-text text-muted">Вводите данные без пробелов и знаков тире</small>
+          </div>
+          <div class="form-group">
+            <label for="issuedBy">Кем выдан паспорт</label>
+            <input type="text" name="issuedBy" required class="form-control" id="issuedBy" placeholder="Кем выдан ваш паспорт">
+          </div>
+          <div class="form-group">
+            <label for="passport_date">Когда выдан</label>
+            <input type="date" required name="passport_date" class="form-control" id="passport_date" placeholder="Выберите дату выдачи паспорта">
+            <small id="passport_date_help" class="form-text text-muted">Введите вручную или нажмите на значок календаря справа</small>
+          </div>
+          <div class="form-group">
+            <label for="passport_gender">Ваш пол</label>
+            <select class="form-control" required name="passport_gender" id="passport_gender">
+              <option value="0" >Мужской</option>
+              <option value="1" >Женский</option>
+              <option value="2" >Другое</option>
+            </select>
+          </div>
+
+
+
+          <div class="form-group">
+            <label for="passport_marital">Ваше семейное положение</label>
+            <select class="form-control" required name="passport_marital" id="passport_marital">
+              <option value="0" >Холост / Не замужем</option>
+              <option value="1" >Женат / Замужем</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="passport_country">Страна</label>
+            <input type="text" required class="form-control" name="passport_country" id="passport_country" placeholder="Страна, указанная в паспорте">
+          </div>
+          <div class="form-group">
+            <label for="passport_region">Регион</label>
+            <input type="text" class="form-control" name="passport_region" id="passport_region" placeholder="Регион (область) по месту регистрации">
+            <small id="passport_region_help" class="form-text text-muted">Это поле можно оставить пустым</small>
+          </div>
+          <div class="form-group">
+            <label for="passport_city">Город</label>
+            <input type="text" required class="form-control" name="passport_city" id="passport_city" placeholder="Город по месту регистрации">
+          </div>
+          <div class="form-group">
+            <label for="passport_street">Улица</label>
+            <input type="text" required class="form-control" name="passport_street" id="passport_street" placeholder="Улица по месту регистрации">
+          </div>
+          <div class="form-group">
+            <label for="passport_house">Дом</label>
+            <input type="text" required class="form-control" name="passport_house" id="passport_house" placeholder="Дом по месту регистрации">
+          </div>
+          <div class="form-group">
+            <label for="passport_apps">Квартира</label>
+            <input type="text" class="form-control" name="passport_apps" id="passport_apps" placeholder="Квартира по месту регистрации">
+            <small id="passport_apps_help" class="form-text text-muted">Это поле можно оставить пустым</small>
+          </div>
+
+          <div class="form-group">
+            <label for="contactNumber">Номер телефона</label>
+            <input type="number" required class="form-control" name="contactNumber" id="contactNumber" placeholder="Контактный номер">
+            <small id="contactNumber_help" class="form-text text-muted">Вводите только цифры</small>
+          </div>
+
+          <p class="h4" style="margin-top: 20px">Данные о месте работы</p>
+          <div class="form-group" style="margin-top: 24px" id="job">
+            <div class="form-group">
+              <label for="company_name">Название компании</label>
+              <input type="text" class="form-control" name="company_name" id="company_name" placeholder="Название компании, в которой вы работали">
+            </div>
+            <div class="form-group">
+              <label for="company_job">Занимаемая должность</label>
+              <input type="text" class="form-control" name="company_job" id="company_job" placeholder="Должность, которую вы занимали">
+            </div>
+            <div class="form-group">
+              <label for="company_name">Дата трудоустройства</label>
+              <input type="date" class="form-control" name="company_date_start" id="company_date_start">
+            </div>
+            <div class="form-group">
+              <label for="company_name">Дата увольнения</label>
+              <input type="date" class="form-control" name="company_date_end" id="company_date_end">
+              <small id="company_date_end_help" class="form-text text-muted">Оставьте пустым, если еще работаете</small>
+            </div>
+            <div class="form-group">
+              <label for="company_name">Средняя заработная плата</label>
+              <input type="text" required class="form-control" name="company_salary" id="company_salary" placeholder="Ваша заработная плата">
+              <small id="company_name_help" class="form-text text-muted">Введите сумму цифрами</small>
+            </div>
+          </div>
+          <div class="form-check">
+            <input type="checkbox" class="form-check-input" name="has_no_job" id="has_no_job">
+            <label for="has_no_job" class="form-check-label">У меня нет работы</label>
+          </div>
+
+
+          <p class="h4" style="margin-top: 20px">Данные о кредите</p>
+          <div class="form-group">
+            <label for="desired_amount">Сумма кредита</label>
+            <input type="text" required class="form-control" name="desired_amount" id="desired_amount" placeholder="Сумма, которую вы хотели бы получить">
+            <small id="desired_amount_help" class="form-text text-muted">Введите сумму цифрами</small>
+          </div>
+          <div class="form-group">
+            <button type="submit" class="btn btn-primary">Создать заявку</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <script>
+      var checkbox = $('#has_no_job'), chShipBlock = $('#job');
+
+      checkbox.on('click', function() {
+        if($(this).is(':checked')) {
+          chShipBlock.hide();
+          chShipBlock.find('input').attr('required', false);
+        } else {
+          chShipBlock.show();
+          chShipBlock.find('input').attr('required', true);
+        }
+      });
+    </script>
+  </body>
+</html>

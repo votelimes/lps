@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <title>Заявки пользователя</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://unpkg.com/gijgo@1.9.13/js/gijgo.min.js" type="text/javascript"></script>
+    <link href="https://unpkg.com/gijgo@1.9.13/css/gijgo.min.css" rel="stylesheet" type="text/css"  />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+</head>
+<body style="background-color: #eeebe2">
+    <!--HEADER-->
+    <header th:insert="blocks/header :: header"></header>
+    <!--MEDIUM-->
+    <div class="card-header text-dark rounded" style="margin-left: 20px; margin-right: 20px; margin-top: 20px; background-color: #80d5da">
+        <div>
+        <h4>Актуальные данные о пользователе:</h4>
+        <h5><b>ФИО: </b><span th:text="${passport.getFullName()}">Самойлов Валентин Андреевич</span>.</h5>
+        <h5><b>Дата рождения: </b><span th:text="${passport.birthDate}">01.01.1970 г.</span>.</h5>
+        <h5><b>Паспорт: </b><span th:text="${passport.getSeriesAndNumber()}">00-00 000-000</span>.</h5>
+        <h5><b>Регистрация: </b><span th:text="${passport.getFullAddress()}">Страна, Край, Город, Улица, Дом, Квартира</span>.</h5>
+        <h5><b>Выдан: </b><span th:text="${passport.issuedBy}">****** ********* *************** ********* *****</span>, числа <span>01.01.1970 г.</span>.</h5>
+        </div>
+    </div>
+    <div class="row justify-content-center" style="margin-top: 60px">
+        <div class="col-md-6">
+            <div th:each="el : ${applications}">
+                <div class="card shadow" style="margin-bottom: 40px;">
+                    <div class="card-header text-white" style="background-color: #ff9f8c">
+                        <h5 class="card-text"><b>Дата заявки: </b><span th:text="${el.creationDate}">01.01.1970 г.</span>.
+                        <span class="float-right"><b>Состояние: </b><span th:text="${el.loanState.getInRussian()}">Создано</span></span></h5>
+                    </div>
+                    <div class="card-body" style="background-color: #B0E5E8">
+                        <p class="card-text" ><b>Паспорт: </b><span th:text="${el.passport.getSeriesAndNumber()}">00-00 000-000</span>.</p>
+                        <p class="card-text" ><b>Заявка: </b><span th:text="${el.uuid}">000000-ioh30ij5h60-2j05h2-205jh2</span>.</p>
+                        <p class="card-text" ><b>Сумма: </b><span th:text="${el.desiredAmount}">000000</span>.</p>
+                        <p class="card-text" ><b>Срок: </b><span th:text="${el.repaymentTime}">370</span>.</p>
+                        <p class="card-text" ><b>Телефонный номер: </b><span th:text="${el.contactNumber}">00000000000</span>.</p>
+                    </div>
+                    <div class="card-footer" >
+                        <form action="" method="post">
+                            <input hidden name="loan_id" th:value="${el.uuid}">
+                            <button class="btn btn-primary border-0" style="padding: 10px; background-color: #ff9f8c">Просмотреть заявку</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer th:insert="blocks/footer :: footer"></footer>
+</body>
+</html>
