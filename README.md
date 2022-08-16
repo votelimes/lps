@@ -3,7 +3,7 @@
   Training Spring 5 MVC application for a loan service enterprise.
 </p>
 <p>
-  Based on Sprint MVC, Spring Security, Thymeleaf, Hibernate, Bootstrap(front-end) and PostgreSQL(9).
+  Based on Spring MVC, Spring Security, Thymeleaf, Hibernate, Bootstrap(front-end) and PostgreSQL(9).
 </p>
 <div>
   Main features: 
