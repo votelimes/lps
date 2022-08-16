@@ -31,7 +31,7 @@
 		<!--Grid column-->
 	</form>
 	<div class="row d-flex justify-content-center">
-		<div th:if="${error == true}" th:text="${errorMessage}" class="alert alert-danger row d-flex justify-content-center" role="alert"></div>
+		<p th:if="${error != null}" th:text="${errorMessage}" class="alert alert-danger row d-flex justify-content-center" role="alert"></p>
 	</div>
 	<blockquote class="blockquote text-center" style="margin-bottom: 40px; margin-top: 60px">
 	<p class="mb-0">или</p>

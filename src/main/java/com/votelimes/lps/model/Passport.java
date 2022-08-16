@@ -87,6 +87,7 @@ public class Passport {
             sb.append(", ");
         }
         if(isStringValid(registrationCity)){
+            sb.append("город ");
             sb.append(registrationCity);
             sb.append(", ");
         }

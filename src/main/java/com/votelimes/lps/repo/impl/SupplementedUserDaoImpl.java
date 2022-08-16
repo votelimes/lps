@@ -1,8 +1,9 @@
 package com.votelimes.lps.repo.impl;
 
+import com.votelimes.lps.model.Passport;
 import com.votelimes.lps.model.SupplementedUser;
-import com.votelimes.lps.model.User;
 import com.votelimes.lps.model.enums.LoanState;
+import com.votelimes.lps.repo.SupplementedUserQueryBuilder;
 import com.votelimes.lps.repo.dao.SupplementedUserDao;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -129,15 +130,73 @@ public class SupplementedUserDaoImpl implements SupplementedUserDao {
     }
 
     @Override
+    public List<SupplementedUser> getByFullNameAndStateAndNumberAndPassport(String fullName, LoanState state, String number, String seriesAndNumber) throws NoResultException {
+        Session session = SessionGetter.getSession(sessionFactory);
+
+        StringBuilder queryBuilder = new StringBuilder("select distinct usr from SupplementedUser usr join CreditApplication ca on usr.id = ca.user join Passport ps on ca.passportId = ps.id where");
+        boolean addAnd = false;
+        if(fullName != null && fullName.length() > 0){
+            queryBuilder.append(" (concat(ps.secondName, ' ', ps.firstName, ' ', ps.patronymic) like ?1)");
+            addAnd = true;
+        }
+        if(state != null){
+            if(addAnd){
+                queryBuilder.append(" AND");
+            }
+            queryBuilder.append(" (cast(ca.loanState as text) = cast(?2 as text)) ");
+            addAnd = true;
+        }
+        if(number != null && number.length() > 0){
+            if(addAnd){
+                queryBuilder.append(" AND");
+            }
+            queryBuilder.append(" (ca.contactNumber = ?3)");
+            addAnd = true;
+        }
+        if(seriesAndNumber != null && seriesAndNumber.length() > 0){
+            if(addAnd){
+                queryBuilder.append(" AND");
+            }
+            queryBuilder.append(" (concat(ps.passportSeries, ' ', ps.passportID) like ?4)");
+            addAnd = true;
+        }
+        if(addAnd == false){
+            queryBuilder = new StringBuilder("select distinct usr from SupplementedUser usr where usr.role = 'client'");
+        }
+
+        Query<SupplementedUser> query = session.createQuery(queryBuilder.toString());
+
+        if(fullName != null && fullName.length() > 0){
+            query.setString(1, "%"+fullName+"%");
+        }
+        if(state != null){
+            query.setString(2, String.valueOf(state));
+        }
+        if(number != null && number.length() > 0){
+            query.setString(3, number);
+        }
+        if(seriesAndNumber != null && seriesAndNumber.length() > 0){
+            query.setString(4, "%" + seriesAndNumber + "%");
+        }
+
+        return query.list();
+    }
+
+    @Override
     public Iterable<SupplementedUser> getLoanState(LoanState loanState) throws NoResultException {
         return null;
+    }
+
+    @Override
+    public SupplementedUserQueryBuilder builder() {
+        return new Builder();
     }
 
     @Override
     public Iterable<SupplementedUser> getAll() throws NoResultException {
         Session session = SessionGetter.getSession(sessionFactory);
 
-        List<SupplementedUser> result = session.createQuery("from SupplementedUser usr where usr.role = 'client'").list();
+        List<SupplementedUser> result = session.createQuery("select distinct usr from SupplementedUser usr where usr.role = 'client'").list();
         return result;
     }
 
@@ -153,6 +212,42 @@ public class SupplementedUserDaoImpl implements SupplementedUserDao {
         catch (Exception ignored){}
         finally {
             transaction.commit();
+        }
+    }
+
+    // Билдер для составного запроса выборки пользователей в каталоге /lps/manager. Возвращает результат запроса.
+    public class Builder implements SupplementedUserQueryBuilder {
+        String fullName = null;
+        LoanState loanState = null;
+        String contactNumber = null;
+        String passportSeriesAndId = null;
+        @Override
+        public SupplementedUserQueryBuilder setFullName(String fullName) {
+            this.fullName = fullName;
+            return this;
+        }
+
+        @Override
+        public SupplementedUserQueryBuilder setLoanState(LoanState loanState) {
+            this.loanState = loanState;
+            return this;
+        }
+
+        @Override
+        public SupplementedUserQueryBuilder setContactNumber(String contactNumber) {
+            this.contactNumber = contactNumber;
+            return this;
+        }
+
+        @Override
+        public SupplementedUserQueryBuilder setPassportSeriesAndId(String passportSeriesAndId) {
+            this.passportSeriesAndId = passportSeriesAndId;
+            return this;
+        }
+
+        @Override
+        public List<SupplementedUser> buildAndExecuteGetByFullNameAndStateAndNumberAndPassport() {
+            return SupplementedUserDaoImpl.this.getByFullNameAndStateAndNumberAndPassport(fullName, loanState, contactNumber, passportSeriesAndId);
         }
     }
 }

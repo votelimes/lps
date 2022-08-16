@@ -2,6 +2,7 @@ package com.votelimes.lps.controller.manager;
 
 import com.votelimes.lps.model.SupplementedUser;
 import com.votelimes.lps.model.enums.LoanState;
+import com.votelimes.lps.repo.SupplementedUserQueryBuilder;
 import com.votelimes.lps.repo.dao.SupplementedUserDao;
 import com.votelimes.lps.repo.dao.UserDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
 import javax.persistence.NoResultException;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 // Список клиентов
 @Controller
@@ -35,51 +38,40 @@ public class ManagerController {
     @RequestMapping(value = "/manager", method = RequestMethod.POST)
     public RedirectView onUserSelected(Model model, @RequestBody MultiValueMap<String, String> formData, RedirectAttributes redirectAttributes){
         if(formData.containsKey("s")){
-            Iterable<SupplementedUser> users = null;
+            List<SupplementedUser> users = null;
             String searchQuery = formData.getFirst("search_field");
             int searchMode = Integer.parseInt(formData.getFirst("search_mode"));
             int selectedStateInt = Integer.parseInt(formData.getFirst("search_status"));
             LoanState selectedState = LoanState.getInOrder(selectedStateInt);
+            SupplementedUserQueryBuilder builder = supplementedUserDao.builder();
             try {
-                if (selectedStateInt == 5) {
-                    switch (searchMode) {
-                        case 0: {
-                            users = supplementedUserDao.getByFullName(searchQuery);
-                            break;
-                        }
-                        case 1: {
-                            users = supplementedUserDao.getByNumber(searchQuery);
-                            break;
-                        }
-                        case 2: {
-                            users = supplementedUserDao.getByPassport(searchQuery);
-                            break;
-                        }
-                        default:
-                            users = new ArrayList<>();
+                switch (searchMode) {
+                    case 0: {
+                        builder.setFullName(searchQuery);
+                        break;
                     }
-                } else {
-                    switch (searchMode) {
-                        case 0: {
-                            users = supplementedUserDao.getByFullNameAndState(searchQuery, selectedState);
-                            break;
-                        }
-                        case 1: {
-                            users = supplementedUserDao.getByNumberAndState(searchQuery, selectedState);
-                            break;
-                        }
-                        case 2: {
-                            users = supplementedUserDao.getByPassportAndState(searchQuery, selectedState);
-                            break;
-                        }
-                        default:
-                            users = new ArrayList<>();
+                    case 1: {
+                        builder.setContactNumber(searchQuery);
+                        break;
                     }
+                    case 2: {
+                        builder.setPassportSeriesAndId(searchQuery);
+                        break;
+                    }
+                    default:
+                        users = new ArrayList<>();
                 }
+                users = builder
+                        .setLoanState(selectedState)
+                        .buildAndExecuteGetByFullNameAndStateAndNumberAndPassport();
             }
             catch (NoResultException e){
-                model.addAttribute("noResult", true);
-                model.addAttribute("errorMessage", "Пользователей с введенными данными не сущестует.");
+                redirectAttributes.addFlashAttribute("noResult", true);
+                redirectAttributes.addFlashAttribute("errorMessage", "Пользователей с введенными данными не сущестует.");
+            }
+            if(users.size() == 0){
+                redirectAttributes.addFlashAttribute("noResult", true);
+                redirectAttributes.addFlashAttribute("errorMessage", "Пользователей с введенными данными не сущестует.");
             }
             //redirectAttributes.addAttribute("users", users);
             redirectAttributes.addFlashAttribute("users", users);
@@ -94,9 +86,6 @@ public class ManagerController {
 
         redirectAttributes.addAttribute("user_id", formData.get("user_id"));
         redirectAttributes.addFlashAttribute("user_id", formData.get("user_id"));
-
-
-
 
 
         return new RedirectView("manager/client");

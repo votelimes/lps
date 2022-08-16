@@ -2,8 +2,10 @@ package com.votelimes.lps.repo.dao;
 
 import com.votelimes.lps.model.SupplementedUser;
 import com.votelimes.lps.model.enums.LoanState;
+import com.votelimes.lps.repo.SupplementedUserQueryBuilder;
 
 import javax.persistence.NoResultException;
+import java.sql.SQLException;
 
 public interface SupplementedUserDao extends BaseDao<SupplementedUser> {
     public SupplementedUser getSupplementedUserById(int id) throws NoResultException;
@@ -24,6 +26,8 @@ public interface SupplementedUserDao extends BaseDao<SupplementedUser> {
 
     public Iterable<SupplementedUser> getByPassport(String passportID) throws NoResultException;
 
-
+    public Iterable<SupplementedUser> getByFullNameAndStateAndNumberAndPassport(String fullName, LoanState state, String number, String seriesAndNumber) throws NoResultException, SQLException;
     public Iterable<SupplementedUser> getLoanState(LoanState loanState) throws NoResultException;
+
+    public SupplementedUserQueryBuilder builder();
 }

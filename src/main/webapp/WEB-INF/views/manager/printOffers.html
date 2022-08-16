@@ -15,7 +15,7 @@
   </head>
 
   <body id="terms-and-conditions">
-    <div class="row d-flex justify-content-center">
+    <div class="row d-flex justify-content-center" style="margin-top: 80px">
       <div th:if="${error != null}" th:text="${errorMessage}" class="alert alert-danger row d-flex justify-content-center" role="alert"></div>
     </div>
     <div th:each="el : ${applications}">
@@ -41,14 +41,10 @@
               <p style="font-size:120%;">5. В случае нарушения Заемщиком срока возврата денежных средств, указанных в п. 1 настоящего договора, Заемщик будет обязан уплачивать Займодавцу пеню из расчета 0,5% от вовремя невозвращенных сумм за каждый день просрочки. Кроме того, Займодавец будет вправе взыскать с Заемщика причиненные просрочкой исполнения убытки.</p>
               <p style="font-size:120%;">6. Во всем остальном, что не урегулировано положениями настоящего договора, стороны руководствуются положениями действующего законодательства РФ.</p>
             </div>
-            <br>
-            <br>
-            <br>
             <p style="font-size:120%;" th:if="${el.getLoanState().toInt() < 3}">Подпись (Заемщик): ________________</p>
             <p style="font-size:120%;" th:if="${el.getLoanState().toInt() >= 3}">Подпись (Заемщик): <b>ПОДПИСАН</b><b th:text="' ('+${el.passport.getFullName()}+')'"></b></p>
             <p style="margin-top: 40px; font-size:120%;" th:if="${el.getLoanState().toInt() < 3}">Подпись (Займодавец): ________________</p>
             <p style="margin-top: 40px; font-size:120%;" th:if="${el.getLoanState().toInt() >= 3}"> Подпись (Займодавец): <b>ПОДПИСАН (ООО "ЛПС-СИСТЕМА")</b></p>
-            <br>
             <p style="margin-top: 40px; font-size:120%;">Дата подписания: <b th:text="${el.getSignDateAsString()}"></b></p>
           </div>
         </div>

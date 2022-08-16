@@ -45,6 +45,7 @@ public class LoanSearchController {
         }catch (Exception ignored){}
 
         if(printOffers){
+
             if(selectedState != null) {
                 redirectAttributes.addFlashAttribute("loanState", selectedState.toInt());
             }
@@ -54,7 +55,6 @@ public class LoanSearchController {
 
            return new RedirectView("printOffers");
         }
-
 
         try {
             if(selectedStateInt != 6) {
@@ -67,8 +67,14 @@ public class LoanSearchController {
         }
         catch (NoResultException e){
             redirectAttributes.addFlashAttribute("noResult", true);
-            redirectAttributes.addAttribute("errorMessage", "Заявок с введенными данными не сущестует.");
+            redirectAttributes.addFlashAttribute("errorMessage", "Заявок с введенными данными не сущестует.");
         }
+
+        if(!applications.iterator().hasNext()){
+            redirectAttributes.addFlashAttribute("noResult", true);
+            redirectAttributes.addFlashAttribute("errorMessage", "Заявок с введенными данными не сущестует.");
+        }
+
         return new RedirectView("loanSearch");
     }
 
