@@ -2,7 +2,6 @@ package com.votelimes.lps.controller.manager;
 
 
 import com.votelimes.lps.model.CreditApplication;
-import com.votelimes.lps.model.SupplementedUser;
 import com.votelimes.lps.model.enums.LoanState;
 import com.votelimes.lps.repo.dao.CreditApplicationDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,19 +15,21 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
 import javax.persistence.NoResultException;
-import java.util.ArrayList;
 
+// Обрабатывает страницу поиска заявок
 @Controller
 public class LoanSearchController {
 
     @Autowired
     CreditApplicationDao creditApplicationDao;
 
+    //Отображение
     @RequestMapping(value = "/manager/loanSearch", method = RequestMethod.GET)
-    public String loanSearchShow(Model model){
+    public String onPageShow(Model model){
         return "manager/loanSearch";
     }
 
+    //Обработка поискового запроса
     @RequestMapping(value = "/manager/loanSearch", method = RequestMethod.POST)
     public RedirectView onLoanSearchFilter(Model model, RedirectAttributes redirectAttributes, @RequestBody MultiValueMap<String, String> formData){
         Iterable<CreditApplication> applications = null;
@@ -47,13 +48,21 @@ public class LoanSearchController {
             if(selectedState != null) {
                 redirectAttributes.addFlashAttribute("loanState", selectedState.toInt());
             }
+            else{
+                redirectAttributes.addFlashAttribute("loanState", selectedStateInt);
+            }
 
            return new RedirectView("printOffers");
         }
 
 
         try {
-            applications = creditApplicationDao.getByLoanStateAndFullName(selectedState, searchQuery);
+            if(selectedStateInt != 6) {
+                applications = creditApplicationDao.getByLoanStateAndFullName(selectedState, searchQuery);
+            }
+            else{
+                applications = creditApplicationDao.getAllCompletedAndSignedByFullName(searchQuery);
+            }
             redirectAttributes.addFlashAttribute("applications", applications);
         }
         catch (NoResultException e){
@@ -63,8 +72,9 @@ public class LoanSearchController {
         return new RedirectView("loanSearch");
     }
 
+    //Когда выбрана заявка (переход к детальному просмотру)
     @RequestMapping(value = "/manager/loanSearchSelected", method = RequestMethod.POST)
-    public RedirectView onLoanSearchSelected(Model model, RedirectAttributes redirectAttributes, @RequestBody MultiValueMap<String, String> formData){
+    public RedirectView onLoanSelected(Model model, RedirectAttributes redirectAttributes, @RequestBody MultiValueMap<String, String> formData){
         String uuid = formData.getFirst("loan_id");
         redirectAttributes.addAttribute("loan_id", uuid);
         redirectAttributes.addFlashAttribute("loan_id", uuid);

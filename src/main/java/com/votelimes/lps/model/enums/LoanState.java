@@ -1,5 +1,8 @@
 package com.votelimes.lps.model.enums;
 
+// Статусы заявки, подаваемой пользователем. Из-за работы CreditManager, после создания заявки пользователем, она с 50%
+// вероятностью становится approved или rejected. Менеджер может вручную менять эти статусы в manager/application, если
+// заявка не подписана пользователем.
 public enum LoanState implements DisplayableInRussian{
     created, rejected, approved, signed, completed;
     public String getInRussian(){

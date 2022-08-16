@@ -27,17 +27,20 @@ import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
 import java.util.List;
 
+// Создание заявки на кредит пользователем
 @Controller
 public class CreditCreateController {
 
     @Autowired
     DataService ds;
 
+    // Отображение страницы
     @RequestMapping(value = "/create", method = RequestMethod.GET)
     public String showPage(Model model){
         return "create";
     }
 
+    // Обработка заполненной пользователем формы
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public RedirectView onCreateRequest(@RequestBody MultiValueMap<String, String> fd, RedirectAttributes ra){
         User usr = new User();
@@ -96,16 +99,20 @@ public class CreditCreateController {
         return new RedirectView("success");
     }
 
+    // Если форма обработана правильно, переход к показу сгенерированного UUID
     @RequestMapping(value = "/success", method = RequestMethod.GET)
     public String showSuccess(Model model, RedirectAttributes ra){
         String uuid = (String) model.getAttribute("loan_id");
-
         return "success";
     }
+
+    // Возврат из показа UUID в Home
     @RequestMapping(value = "/success", method = RequestMethod.POST)
     public String onSuccessPost(Model model, RedirectAttributes ra) {
         return "index";
     }
+
+    // Получение даты из строки (два варианта, хоть и локализация явно указана в html (bootstrap js линк))
     private Date parseDate(String dateStr){
         if(dateStr == null){
             return null;

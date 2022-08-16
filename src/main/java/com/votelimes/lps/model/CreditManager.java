@@ -6,6 +6,8 @@ import java.math.BigDecimal;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
+// Класс, имитирующий работу автоматической системы по оценки платежеспособности и надежности пользователя,
+// подающего заявку
 public class CreditManager {
 
     // Stub

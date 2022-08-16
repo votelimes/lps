@@ -34,6 +34,17 @@ public class CreditApplicationDaoImpl implements CreditApplicationDao {
     }
 
     @Override
+    public List<CreditApplication> getAllCompletedAndSigned() throws NoResultException {
+        Session session = SessionGetter.getSession(sessionFactory);
+
+        Query<CreditApplication> query = session.createQuery("select ca from CreditApplication ca where cast(ca.loanState as text) = cast(?1 as text) OR cast(ca.loanState as text) = cast(?2 as text)");
+        query.setString(1, String.valueOf(LoanState.signed));
+        query.setString(2, String.valueOf(LoanState.completed));
+        List<CreditApplication> result = query.list();
+        return result;
+    }
+
+    @Override
     public List<CreditApplication> getByLoanState(LoanState state) throws NoResultException{
         Session session = SessionGetter.getSession(sessionFactory);
 
@@ -56,6 +67,18 @@ public class CreditApplicationDaoImpl implements CreditApplicationDao {
         else{
             return getByFullName(fullName);
         }
+    }
+
+    @Override
+    public List<CreditApplication> getAllCompletedAndSignedByFullName(String fullName) throws NoResultException {
+        Session session = SessionGetter.getSession(sessionFactory);
+
+        Query<CreditApplication> query = session.createQuery("select ca from CreditApplication ca inner join Passport p on ca.passportId = p.id where (cast(ca.loanState as text) = cast(?1 as text) OR cast(ca.loanState as text) = cast(?2 as text)) AND (concat(p.secondName, ' ', p.firstName, ' ', p.patronymic) like ?3)");
+        query.setString(1, String.valueOf(LoanState.signed));
+        query.setString(2, String.valueOf(LoanState.completed));
+        query.setString(3, "%" + fullName + "%");
+        List<CreditApplication> result = query.list();
+        return result;
     }
 
     @Override

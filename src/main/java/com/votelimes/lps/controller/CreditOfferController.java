@@ -22,6 +22,7 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
 
+// Вывод одного или нескольких договоров на печать
 @Controller
 public class CreditOfferController {
 
@@ -31,6 +32,7 @@ public class CreditOfferController {
     @Autowired
     PassportDao passportDao;
 
+    // Вывод одного договора от конкретной заявки из application или status
     @RequestMapping(value = "/offer", method = RequestMethod.GET)
     public String showOfferPage(Model model, @RequestParam(required=false) String uuid, @RequestParam(required=false) boolean signOffer, @RequestParam(required=false) boolean showOffer) {
         CreditApplication ca = null;
@@ -58,6 +60,8 @@ public class CreditOfferController {
 
         return "offer";
     }
+
+    // Обработка подписи договора пользователем, переход обратно в status (к детальному просмотру договора)
     @RequestMapping(value = "/offer", method = RequestMethod.POST)
     public RedirectView onUserOffer(Model model, @RequestBody MultiValueMap<String, String> formData, RedirectAttributes redirectAttributes) {
         Object openOffer = formData.getFirst("openOffer");
@@ -88,31 +92,40 @@ public class CreditOfferController {
         return new RedirectView("status");
     }
 
+    // Вывод нескольких договоров из LoanSearch
     @RequestMapping(value = "/manager/printOffers", method = RequestMethod.GET)
     public String showAllOffersPage(Model model) {
         List<CreditApplication> applications = null;
         if(model.containsAttribute("loanState")) {
             int loanStateOrder = (Integer) model.getAttribute("loanState");
-            LoanState loanState = LoanState.getInOrder(loanStateOrder);
-            try {
-                applications = creditApplicationDao.getByLoanState(loanState);
-                model.addAttribute("applications", applications);
+            if(loanStateOrder < 5) {
+                LoanState loanState = LoanState.getInOrder(loanStateOrder);
+                try {
+                    applications = creditApplicationDao.getByLoanState(loanState);
+                    model.addAttribute("applications", applications);
+                } catch (NoResultException ignored) {
+                    model.addAttribute("error", true);
+                    model.addAttribute("errorMessage", "Отсутствуют договоры для печати с указанным фильтром");
+                }
             }
-            catch (NoResultException ignored){
-                model.addAttribute("error", true);
-                model.addAttribute("errorMessage", "Отсутствуют договоры для печати с указанным фильтром");
+            else if(loanStateOrder == 6){
+                try {
+                    applications = creditApplicationDao.getAllCompletedAndSigned();
+                    model.addAttribute("applications", applications);
+                } catch (NoResultException ignored) {model.addAttribute("error", true);
+                    model.addAttribute("errorMessage", "Отсутствуют договоры для печати с указанным фильтром");
+                }
             }
-        }
-        else{
-            try {
-                applications = creditApplicationDao.getAll();
-                model.addAttribute("applications", applications);
+            else{
+                try {
+                    applications = creditApplicationDao.getAll();
+                    model.addAttribute("applications", applications);
+                }
+                catch (NoResultException ignored){
+                    model.addAttribute("error", true);
+                    model.addAttribute("errorMessage", "Отсутствуют договоры для печати");
+                }
             }
-            catch (NoResultException ignored){
-                model.addAttribute("error", true);
-                model.addAttribute("errorMessage", "Отсутствуют договоры для печати");
-            }
-
         }
         if(applications.size() == 0){
             model.addAttribute("error", true);

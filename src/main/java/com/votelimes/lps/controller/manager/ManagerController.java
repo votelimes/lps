@@ -17,6 +17,7 @@ import org.springframework.web.servlet.view.RedirectView;
 import javax.persistence.NoResultException;
 import java.util.ArrayList;
 
+// Список клиентов
 @Controller
 public class ManagerController {
     @Autowired
@@ -25,10 +26,12 @@ public class ManagerController {
     @Autowired
     UserDao userDao;
 
+    // Отображение окна
     @RequestMapping(value = "/manager", method = RequestMethod.GET)
     public String showPage(Model model){
         return "/manager/index";
     }
+    // Обработка поискового запроса, переход к детальному просмотру клиента
     @RequestMapping(value = "/manager", method = RequestMethod.POST)
     public RedirectView onUserSelected(Model model, @RequestBody MultiValueMap<String, String> formData, RedirectAttributes redirectAttributes){
         if(formData.containsKey("s")){

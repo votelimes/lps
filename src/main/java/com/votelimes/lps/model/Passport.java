@@ -7,6 +7,11 @@ import lombok.Data;
 import javax.persistence.*;
 import java.sql.Date;
 
+
+// Если пользователь, при создании заявки вводит существующий паспорт (серия и номер одинаковы),
+// он не будет добавлен в бд.
+// Вместо него будет использоваться паспорт, который был введен ранее, таким образом у одного паспорта может быть
+// нексолько заявок. У одного пользователя может быть несколько паспортов, однако данный функционал не внедрен до конца.
 @Entity
 @Table(name = "passport")
 @Data
@@ -63,9 +68,11 @@ public class Passport {
     @Enumerated(EnumType.STRING)
     Gender gender;
 
+    // Кем выдан
     @Column(name = "issuedBy")
     String issuedBy;
 
+    // Пользователь, ассоциируемый с паспортом
     @Column(name = "user_id")
     int user;
 

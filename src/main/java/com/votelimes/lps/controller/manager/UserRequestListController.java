@@ -19,6 +19,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+// Список заявок клиента и информация о его последнем паспорте и наиболее актуальных данных
 @Controller
 public class UserRequestListController {
     @Autowired
@@ -27,6 +28,7 @@ public class UserRequestListController {
     @Autowired
     PassportDao passportDao;
 
+    // Отображение списка заявок
     @RequestMapping(value = "/manager/client", method = RequestMethod.GET)
     public String showUserRequests(Model model, RedirectAttributes redirectAttributes){
         try {
@@ -47,6 +49,7 @@ public class UserRequestListController {
             return "redirect:/webserviceUnavailable";
         }
     }
+    // Переход к конкретной, выбранной заявке
     @RequestMapping(value = "/manager/client", method = RequestMethod.POST)
     public RedirectView onRequestSelect(@RequestBody MultiValueMap<String, String> formData, RedirectAttributes redirectAttributes){
         String uuid = formData.getFirst("loan_id");

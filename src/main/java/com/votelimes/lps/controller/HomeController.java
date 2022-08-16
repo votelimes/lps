@@ -38,15 +38,18 @@ public class HomeController {
 	@Autowired
 	AuthUtils authUtils;
 
+	// Вывод окна /lps/
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String getHome(Locale locale, Model model) {
 		return "index";
 	}
+	// Вывод окна /lps/
 	@RequestMapping(value = "/index", method = RequestMethod.GET)
 	public String getHomeIndex(Locale locale, Model model) {
 		return "index";
 	}
 
+	// Обработка перехода в status к просмотру заявки из введенного здесь UUID или создания новой заявки по кнопке
 	@RequestMapping(value = "/index", method = RequestMethod.POST)
 	public RedirectView postHome(Model model, @RequestBody MultiValueMap<String, String> formData, RedirectAttributes redirectAttributes) {
 		if(formData.get("create") != null){
@@ -69,6 +72,7 @@ public class HomeController {
 		}
 	}
 
+	// Вывод about
 	@RequestMapping(value = "/about", method = RequestMethod.GET)
 	public String onAboutSelected(){
 		boolean logged = authUtils.isLogged();

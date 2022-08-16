@@ -19,6 +19,8 @@ import org.springframework.web.servlet.view.RedirectView;
 import javax.persistence.NoResultException;
 import java.util.stream.Collectors;
 
+
+// Окно статуса заявки, который может просматривать пользователь по UUID
 @Controller
 public class CreditStatusController {
 
@@ -31,6 +33,7 @@ public class CreditStatusController {
     @Autowired
     CreditApplicationDao creditApplicationDao;
 
+    // Вывод страницы с введенными пользователем ранее данными (все)
     @RequestMapping(value = "/status", method = RequestMethod.GET)
     public String showPage(Model model, RedirectAttributes redirectAttributes) {
         String applicationUUID = (String) model.getAttribute("loan_id");
@@ -59,6 +62,7 @@ public class CreditStatusController {
 
         return "status";
     }
+
 
     @RequestMapping(value = "/status", method = RequestMethod.POST)
     public RedirectView onUserSign(@RequestBody MultiValueMap<String, String> formData, RedirectAttributes redirectAttributes) {

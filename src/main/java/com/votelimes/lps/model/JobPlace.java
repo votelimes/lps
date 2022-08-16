@@ -5,6 +5,7 @@ import lombok.Data;
 import javax.persistence.*;
 import java.sql.Date;
 
+// Работа, которую вводит пользователь при создании завяки. Связана с User, CreditApplication
 @Entity
 @Table(name = "job_place")
 @Data

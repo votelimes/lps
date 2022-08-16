@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.UUID;
 
 
+
+// Модель, обеспечивающая хранение и моделирование заявки, составляемой пользователем
 @Entity
 @Table(name = "credit_application")
 @Data
@@ -20,9 +22,11 @@ public class CreditApplication {
     private int id;
     @Column(name = "user_id")
     private int user;
+    // Желаемая сумма
     @Column(name = "desired_amount")
     private BigDecimal desiredAmount;
 
+    // Время вычисляется CreditManager или выставляется менеджером вручную
     @Column(name = "repayment_time")
     private short repaymentTime;
     @Column(name = "comment")
@@ -41,15 +45,19 @@ public class CreditApplication {
     @Column(name = "contact_number")
     private String contactNumber;
 
+    // Одобренная сумма вычисляется CreditManager или выставляется менеджером вручную
     @Column(name = "approved_amount")
     private BigDecimal approvedAmount;
 
+    // Дата подписи заявки пользователем
     @Column(name = "sign_date")
     private Date signDate;
 
+    // Ассоциированный с заявкой паспорт.
     @Column(name = "passport_id")
     int passportId;
 
+    // Ссылка на введеную при создании заявки работу
     @Column(name = "job_id")
     int jobId;
 
@@ -58,10 +66,14 @@ public class CreditApplication {
     Passport passport;
 
     public String getSignDateAsString(){
+        String notSigned = "НЕ ПОДПИСАН";
         if(signDate == null){
-            return "НЕ ПОДПИСАН";
+            return notSigned;
         }
         else{
+            if(loanState.toInt() < 3){
+                return notSigned;
+            }
             return signDate.toString();
         }
     }

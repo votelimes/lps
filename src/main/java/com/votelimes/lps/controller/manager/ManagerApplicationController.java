@@ -35,7 +35,7 @@ public class ManagerApplicationController {
     @Autowired
     SupplementedUserDao supplementedUserDao;
 
-
+    // Вывод страницы с введенными пользователем ранее данными (все)
     @RequestMapping(value = "/manager/client/application", method = RequestMethod.GET)
     public String onManagingClientApplicationGet(Model model, @RequestParam(required=false) String loan_id, RedirectAttributes ra) {
         String applicationUUID = (String) model.getAttribute("loan_id");
@@ -67,7 +67,7 @@ public class ManagerApplicationController {
         return "manager/client/application";
     }
 
-
+    // Обработка изменений формы и переход к просмотру договора, если есть запрос
     @RequestMapping(value = "/manager/client/application", method = RequestMethod.POST)
     public RedirectView onManagingClientApplicationPost(@RequestBody(required = false) MultiValueMap<String, String> formData, RedirectAttributes redirectAttributes) {
         if(formData.containsKey("showOffer")){

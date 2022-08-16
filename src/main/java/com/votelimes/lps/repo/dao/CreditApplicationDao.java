@@ -13,9 +13,13 @@ import java.util.List;
 public interface CreditApplicationDao {
     public List<CreditApplication> getAll();
 
+    public List<CreditApplication> getAllCompletedAndSigned() throws NoResultException;
+
     public List<CreditApplication> getByLoanState(LoanState state) throws NoResultException;
 
     public Iterable<CreditApplication> getByLoanStateAndFullName(LoanState state, String fullName) throws NoResultException;
+
+    public List<CreditApplication> getAllCompletedAndSignedByFullName(String fullName) throws NoResultException;
 
     public Iterable<CreditApplication> getByFullName(String fullName) throws NoResultException;
 

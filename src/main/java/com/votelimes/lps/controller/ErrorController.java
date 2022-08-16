@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
 public class ErrorController {
+    // Критическая ошибка, прежде всего связанная с SQLException
     @RequestMapping(value = "/webserviceUnavailable", method = RequestMethod.POST)
     public String serviceUnavailable(@RequestBody MultiValueMap<String, String> fd) {
         return "webserviceUnavailable";

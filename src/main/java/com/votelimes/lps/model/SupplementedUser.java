@@ -10,6 +10,10 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+
+
+// Таблица, необходимая для работы ManagerController и многокритериального поиска заявок и пользователей. По сути, расширеный
+// другими таблицами пользователь. Может быть удалена и заменена отдельными, уже существующими таблицами.
 @Entity
 @Data
 @Table(name = "user_data")

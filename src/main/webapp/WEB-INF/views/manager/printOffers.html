@@ -44,9 +44,12 @@
             <br>
             <br>
             <br>
-            <p style="font-size:120%;">Подпись (Заемщик): ________________</p>
-            <p style="margin-top: 40px; font-size:120%;">Подпись (Займодавец): ________________</p>
-            <p style="margin-top: 40px; font-size:120%;">Дата подписания: <b th:text="${el.getSignDateAsString()}">НЕ ПОДПИСАН</b></p>
+            <p style="font-size:120%;" th:if="${el.getLoanState().toInt() < 3}">Подпись (Заемщик): ________________</p>
+            <p style="font-size:120%;" th:if="${el.getLoanState().toInt() >= 3}">Подпись (Заемщик): <b>ПОДПИСАН</b><b th:text="' ('+${el.passport.getFullName()}+')'"></b></p>
+            <p style="margin-top: 40px; font-size:120%;" th:if="${el.getLoanState().toInt() < 3}">Подпись (Займодавец): ________________</p>
+            <p style="margin-top: 40px; font-size:120%;" th:if="${el.getLoanState().toInt() >= 3}"> Подпись (Займодавец): <b>ПОДПИСАН (ООО "ЛПС-СИСТЕМА")</b></p>
+            <br>
+            <p style="margin-top: 40px; font-size:120%;">Дата подписания: <b th:text="${el.getSignDateAsString()}"></b></p>
           </div>
         </div>
       </div>
